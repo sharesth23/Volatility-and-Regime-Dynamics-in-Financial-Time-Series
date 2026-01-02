@@ -20,3 +20,18 @@ def lagged_features(returns, lags=5):
         df[f"sq_ret_lag_{i}"] = returns.pow(2).shift(i)
 
     return df
+
+def volatility_features(returns):
+    """
+    Full feature set for volatility forecasting.
+    """
+    features = pd.DataFrame(index=returns.index)
+
+    features["rv_5"] = realized_volatility(returns, 5)
+    features["rv_21"] = realized_volatility(returns, 21)
+    features["rv_63"] = realized_volatility(returns, 63)
+
+    lagged = lagged_features(returns)
+    features = pd.concat([features, lagged], axis=1)
+
+    return features.dropna()
